@@ -20627,6 +20627,15 @@ export type GlobalSearchType = {
 
 export type AccountErrorFragment = Pick<AccountError, 'code' | 'field' | 'message'>;
 
+export type MembershipHistoryFragment = {
+  id: string;
+  membershipAmount: number;
+  membershipPurchase: string;
+  membershipCashbackDiscount: number;
+  membershipFreeShipping: number;
+  membershipExpiry: string;
+};
+
 export type AddressFragment = (
   Pick<Address, 'id' | 'firstName' | 'lastName' | 'companyName' | 'streetAddress1' | 'streetAddress2' | 'city' | 'cityArea' | 'postalCode' | 'countryArea' | 'phone' | 'isDefaultBillingAddress' | 'isDefaultShippingAddress'>
   & { country: Pick<CountryDisplay, 'code' | 'country'> }
@@ -20638,7 +20647,7 @@ export type UserFragment = (
     { __typename: 'OrderCountableConnection' }
     & Pick<OrderCountableConnection, 'totalCount'>
     & { edges: Array<{ node: Pick<Order, 'id'> }> }
-  )>, metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, defaultShippingAddress: Maybe<AddressFragment>, defaultBillingAddress: Maybe<AddressFragment>, addresses: Maybe<Array<Maybe<AddressFragment>>> }
+  )>, metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, defaultShippingAddress: Maybe<AddressFragment>, defaultBillingAddress: Maybe<AddressFragment>, addresses: Maybe<Array<Maybe<AddressFragment>>>, membershipHistory: Maybe<MembershipHistoryFragment> }
 );
 
 export type PriceFragment = { gross: Pick<Money, 'amount' | 'currency'>, net: Pick<Money, 'amount' | 'currency'> };

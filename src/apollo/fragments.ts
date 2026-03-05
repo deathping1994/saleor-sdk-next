@@ -69,6 +69,14 @@ export const userFragment = gql`
     addresses {
       ...AddressFragment
     }
+    membershipHistory {
+      id
+      membershipAmount
+      membershipPurchase
+      membershipCashbackDiscount
+      membershipFreeShipping
+      membershipExpiry
+    }
   }
 `;
 
