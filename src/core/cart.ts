@@ -1779,6 +1779,9 @@ export const cart = ({
     isRecalculate = false,
     checkoutMetadataInput?: any
   ) => {
+    const checkoutTag = process.env.NEXT_PUBLIC_CHECKOUT_TAG;
+    const tagsToSend = checkoutTag ? [checkoutTag] : undefined;
+
     if (useCheckoutLoading) {
       client.writeQuery({
         query: GET_LOCAL_CHECKOUT,
@@ -1919,6 +1922,7 @@ export const cart = ({
           lines: linesToAdd,
           email: "dummy@dummy.com",
           isRecalculate: isRecalculate,
+          ...(tagsToSend ? { tags: tagsToSend } : {}),
           ...(checkoutMetadataInput
             ? { checkoutMetadataInput: checkoutMetadataInput }
             : {}),
