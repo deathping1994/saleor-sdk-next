@@ -141,10 +141,31 @@ export const createFetch = ({
 
   if (refreshOnUnauthorized && token) {
     const response = await fetch(input, init);
-    const data: FetchResult = await response.clone().json();
-    const isUnauthenticated = data?.errors?.some(
-      error => error.extensions?.exception?.code === "ExpiredSignatureError"
-    );
+    const data: any = await response.clone().json();
+    
+    console.log("SALEOR SDK - Fetch Response Data:", JSON.stringify(data));
+
+    let isUnauthenticated = false;
+    if (Array.isArray(data)) {
+      isUnauthenticated = data.some(
+        (item: any) => item?.errors?.some(
+          (error: any) => {
+            console.log("SALEOR SDK - Checking Error in Array:", JSON.stringify(error));
+            return error.extensions?.exception?.code === "ExpiredSignatureError";
+          }
+        )
+      );
+    } else {
+      isUnauthenticated = data?.errors?.some(
+        (error: any) => {
+          console.log("SALEOR SDK - Checking Error in Object:", JSON.stringify(error));
+          return error.extensions?.exception?.code === "ExpiredSignatureError";
+        }
+      ) || false;
+    }
+    
+    console.log("SALEOR SDK - isUnauthenticated:", isUnauthenticated);
+
     let refreshTokenResponse: FetchResult<
       RefreshTokenMutation,
       Record<string, unknown>,
@@ -152,26 +173,34 @@ export const createFetch = ({
     > | null = null;
 
     if (isUnauthenticated) {
+      console.log("SALEOR SDK - Token Expired, attempting refresh...");
       try {
         if (refreshPromise) {
+          console.log("SALEOR SDK - Awaiting existing refresh promise");
           refreshTokenResponse = await refreshPromise;
         } else {
+          console.log("SALEOR SDK - Initiating new refresh promise");
           refreshPromise = authClient.refreshToken();
           refreshTokenResponse = await refreshPromise;
         }
+
+        console.log("SALEOR SDK - Refresh response:", JSON.stringify(refreshTokenResponse));
 
         if (
           refreshTokenResponse?.data &&
           refreshTokenResponse?.data?.tokenRefresh?.token
         ) {
+          console.log("SALEOR SDK - Refresh successful, retrying original request");
           return createFetch({
             autoTokenRefresh: false,
             refreshOnUnauthorized: false,
           })(input, init);
         } else {
+          console.log("SALEOR SDK - Refresh failed (null token), logging out");
           authClient.signOut();
         }
       } catch (e) {
+        console.log("SALEOR SDK - Refresh threw an error:", e);
         authClient.signOut();
       } finally {
         refreshPromise = null;
