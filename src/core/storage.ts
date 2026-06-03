@@ -35,7 +35,10 @@ export const createStorage = (autologinEnabled: boolean): void => {
   let authPluginId: string | null = LOCAL_STORAGE_EXISTS
     ? localStorage.getItem(SALEOR_AUTH_PLUGIN_ID)
     : null;
-  let accessToken: string | null = null;
+  let accessToken: string | null =
+    autologinEnabled && LOCAL_STORAGE_EXISTS
+      ? localStorage.getItem(SALEOR_AUTH_TOKEN)
+      : null;
   let csrfToken: string | null =
     autologinEnabled && LOCAL_STORAGE_EXISTS
       ? localStorage.getItem(SALEOR_CSRF_TOKEN)
