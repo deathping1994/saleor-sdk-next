@@ -141,10 +141,17 @@ export const createFetch = ({
 
   if (refreshOnUnauthorized && token) {
     const response = await fetch(input, init);
-    const data: FetchResult = await response.clone().json();
-    const isUnauthenticated = data?.errors?.some(
-      error => error.extensions?.exception.code === "ExpiredSignatureError"
-    );
+    let isUnauthenticated = false;
+    try {
+      const data: FetchResult = await response.clone().json();
+      isUnauthenticated = !!data?.errors?.some(
+        error =>
+          error.message === "Signature has expired" ||
+          error.extensions?.exception?.code === "ExpiredSignatureError"
+      );
+    } catch (e) {
+      // Ignored: response is not JSON or parsing failed
+    }
     let refreshTokenResponse: FetchResult<
       RefreshTokenMutation,
       Record<string, unknown>,
@@ -156,6 +163,14 @@ export const createFetch = ({
         if (refreshPromise) {
           refreshTokenResponse = await refreshPromise;
         } else {
+          const currentToken = storage.getAccessToken();
+          if (currentToken && currentToken !== token) {
+            return createFetch({
+              autoTokenRefresh: false,
+              refreshOnUnauthorized: false,
+            })(input, init);
+          }
+
           refreshPromise = authClient.refreshToken();
           refreshTokenResponse = await refreshPromise;
         }
