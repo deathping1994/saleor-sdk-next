@@ -143,38 +143,43 @@ export const createFetch = ({
     const response = await fetch(input, init);
     const data: FetchResult = await response.clone().json();
     const isUnauthenticated = data?.errors?.some(
-      error => error.extensions?.exception.code === "ExpiredSignatureError"
+      error => error.extensions?.exception?.code === "ExpiredSignatureError"
     );
-    let refreshTokenResponse: FetchResult<
-      RefreshTokenMutation,
-      Record<string, unknown>,
-      Record<string, unknown>
-    > | null = null;
 
     if (isUnauthenticated) {
+      let refreshTokenResponse: FetchResult<
+        RefreshTokenMutation,
+        Record<string, unknown>,
+        Record<string, unknown>
+      > | null = null;
+
       try {
-        if (refreshPromise) {
-          refreshTokenResponse = await refreshPromise;
-        } else {
+
+        if (!refreshPromise) {
           refreshPromise = authClient.refreshToken();
-          refreshTokenResponse = await refreshPromise;
         }
+        refreshTokenResponse = await refreshPromise;
 
         if (
-          refreshTokenResponse.data &&
-          refreshTokenResponse.data?.tokenRefresh?.token
+          refreshTokenResponse?.data &&
+          refreshTokenResponse?.data?.tokenRefresh?.token
         ) {
-          // check if mutation returns a valid token after refresh and retry the request
-          return createFetch({
-            autoTokenRefresh: false,
-            refreshOnUnauthorized: false,
-          })(input, init);
+          // Token refreshed successfully.
+          const freshToken = storage.getAccessToken();
+          const retryInit: RequestInit = {
+            ...init,
+            headers: {
+              ...init.headers,
+              Authorization: `JWT ${freshToken}`,
+            },
+          };
+          return fetch(input, retryInit);
         } else {
-          // after Saleor returns ExpiredSignatureError status and token refresh fails
-          // we log out the user and return the failed response
+          // Refresh mutation returned a null/empty token → logout the user.
           authClient.signOut();
         }
       } catch (e) {
+        authClient.signOut();
       } finally {
         refreshPromise = null;
       }
