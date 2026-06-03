@@ -145,37 +145,30 @@ export const createFetch = ({
     const isUnauthenticated = data?.errors?.some(
       error => error.extensions?.exception?.code === "ExpiredSignatureError"
     );
+    let refreshTokenResponse: FetchResult<
+      RefreshTokenMutation,
+      Record<string, unknown>,
+      Record<string, unknown>
+    > | null = null;
 
     if (isUnauthenticated) {
-      let refreshTokenResponse: FetchResult<
-        RefreshTokenMutation,
-        Record<string, unknown>,
-        Record<string, unknown>
-      > | null = null;
-
       try {
-
-        if (!refreshPromise) {
+        if (refreshPromise) {
+          refreshTokenResponse = await refreshPromise;
+        } else {
           refreshPromise = authClient.refreshToken();
+          refreshTokenResponse = await refreshPromise;
         }
-        refreshTokenResponse = await refreshPromise;
 
         if (
           refreshTokenResponse?.data &&
           refreshTokenResponse?.data?.tokenRefresh?.token
         ) {
-          // Token refreshed successfully.
-          const freshToken = storage.getAccessToken();
-          const retryInit: RequestInit = {
-            ...init,
-            headers: {
-              ...init.headers,
-              Authorization: `JWT ${freshToken}`,
-            },
-          };
-          return fetch(input, retryInit);
+          return createFetch({
+            autoTokenRefresh: false,
+            refreshOnUnauthorized: false,
+          })(input, init);
         } else {
-          // Refresh mutation returned a null/empty token → logout the user.
           authClient.signOut();
         }
       } catch (e) {
