@@ -105,7 +105,9 @@ export const createFetch = ({
     const response = await fetch(input, init);
     const data: FetchResult = await response.clone().json();
     const isUnauthenticated = data?.errors?.some(
-      error => error.extensions?.exception.code === "ExpiredSignatureError"
+      error =>
+        error.message === "Signature has expired"  ||
+        error.extensions?.exception?.code === "ExpiredSignatureError"
     );
     let refreshTokenResponse: FetchResult<
       RefreshTokenMutation | ExternalRefreshMutation,
@@ -119,6 +121,14 @@ export const createFetch = ({
         if (refreshPromise) {
           refreshTokenResponse = await refreshPromise;
         } else {
+          const currentToken = storage.getAccessToken();
+          if (currentToken && currentToken !== token) {
+            return createFetch({
+              autoTokenRefresh: false,
+              refreshOnUnauthorized: false,
+            })(input, init);
+          }
+
           refreshPromise = isInternalToken(owner)
             ? authClient.refreshToken()
             : authClient.refreshExternalToken();
@@ -126,10 +136,10 @@ export const createFetch = ({
         }
 
         if (
-          refreshTokenResponse.data &&
-          isTokenRefreshExternal(refreshTokenResponse.data)
+          refreshTokenResponse?.data &&
+          (isTokenRefreshExternal(refreshTokenResponse.data)
             ? refreshTokenResponse.data.externalRefresh?.token
-            : refreshTokenResponse.data?.tokenRefresh?.token
+            : refreshTokenResponse.data?.tokenRefresh?.token)
         ) {
           // check if mutation returns a valid token after refresh and retry the request
           return createFetch({
