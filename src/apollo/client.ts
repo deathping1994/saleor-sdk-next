@@ -143,7 +143,7 @@ export const createFetch = ({
     const response = await fetch(input, init);
     const data: FetchResult = await response.clone().json();
     const isUnauthenticated = data?.errors?.some(
-      error => error.extensions?.exception.code === "ExpiredSignatureError"
+      error => error.extensions?.exception?.code === "ExpiredSignatureError"
     );
     let refreshTokenResponse: FetchResult<
       RefreshTokenMutation,
@@ -161,8 +161,8 @@ export const createFetch = ({
         }
 
         if (
-          refreshTokenResponse.data &&
-          refreshTokenResponse.data?.tokenRefresh?.token
+          refreshTokenResponse?.data &&
+          refreshTokenResponse?.data?.tokenRefresh?.token
         ) {
           // check if mutation returns a valid token after refresh and retry the request
           return createFetch({
