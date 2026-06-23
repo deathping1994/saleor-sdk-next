@@ -399,6 +399,10 @@ export type AddressInput = {
   countryArea?: Maybe<Scalars['String']>;
   /** Phone number. */
   phone?: Maybe<Scalars['String']>;
+  /** Latitude. */
+  latitude?: Maybe<Scalars['Float']>;
+  /** Longitude. */
+  longitude?: Maybe<Scalars['Float']>;
 };
 
 export type AddressLinkType = Node & {

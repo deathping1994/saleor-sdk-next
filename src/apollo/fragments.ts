@@ -18,6 +18,8 @@ export const addressFragment = gql`
     streetAddress2
     city
     cityArea
+    latitude
+    longitude
     postalCode
     country {
       code
