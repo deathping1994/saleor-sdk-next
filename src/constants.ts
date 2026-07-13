@@ -12,6 +12,7 @@ export const REST_API_ENDPOINTS = {
   UPDATE_CART: "update_cart/",
   CREATE_CHECKOUT: "create_checkout/",
   VALIDATE_COUPON: "validate_coupon/",
+  META_SYNC: "meta/sync/",
 };
 
 export const dummyCheckoutFields = {

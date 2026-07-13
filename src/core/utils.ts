@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from "axios";
+import { axiosRequest } from "../apollo";
+import { REST_API_ENDPOINTS, REST_API_METHODS_TYPES } from "../constants";
 
 export interface UtilityFunctionsSDK {
   searchProducts: (
@@ -9,9 +11,15 @@ export interface UtilityFunctionsSDK {
     filters: any,
     options?: any
   ) => Promise<AxiosResponse<any, any> | null | undefined>;
+  metaSync: (
+    options?: any
+  ) => Promise<AxiosResponse<any, any> | null | undefined>;
 }
 
-export const utilityFunctions = (wizzyConfig: any): UtilityFunctionsSDK => {
+export const utilityFunctions = (
+  restApiUrl: string | undefined,
+  wizzyConfig: any
+): UtilityFunctionsSDK => {
   const searchProducts = async (queryOptions: any, options: any = {}) => {
     const { headers, baseUrl } = wizzyConfig;
     if (queryOptions && headers && baseUrl) {
@@ -58,8 +66,52 @@ export const utilityFunctions = (wizzyConfig: any): UtilityFunctionsSDK => {
     return null;
   };
 
+  const metaSync = async (options: any = {}) => {
+    if (!restApiUrl) {
+      console.warn("restApiUrl is not configured");
+      return null;
+    }
+
+    const getCookie = (name: string): string | null => {
+      if (typeof window === "undefined") {
+        return null;
+      }
+      const cookieArr = document.cookie.split(";");
+      for (let i = 0; i < cookieArr.length; i++) {
+        const cookiePair = cookieArr[i].split("=");
+        if (name === cookiePair[0].trim()) {
+          return cookiePair[1] ? decodeURIComponent(cookiePair[1]) : null;
+        }
+      }
+      return null;
+    };
+
+    const fbp = getCookie("_fbp");
+    const fbc = getCookie("_fbc");
+
+    const fullUrl = `${restApiUrl}${REST_API_ENDPOINTS.META_SYNC}`;
+    const data = {
+      fbp: fbp || "",
+      fbc: fbc || "",
+    };
+
+    try {
+      const response = await axiosRequest(
+        fullUrl,
+        REST_API_METHODS_TYPES.POST,
+        data,
+        options
+      );
+      return response;
+    } catch (error) {
+      console.error("Error occurred in metaSync", error);
+      return null;
+    }
+  };
+
   return {
     searchProducts,
     filterProducts,
+    metaSync,
   };
 };
