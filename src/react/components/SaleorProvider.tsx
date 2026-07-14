@@ -1,4 +1,3 @@
-"use client";
 
 import React from "react";
 import { SaleorClient } from "../../core";
@@ -9,7 +8,7 @@ export type SaleorContextType = {
 
 export const SaleorContext = React.createContext<SaleorClient | null>(null);
 
-export const SaleorProvider: React.FC<{ client: SaleorClient; children?: React.ReactNode }> = ({
+export const SaleorProvider: React.FC<{ client: SaleorClient }> = ({
   client,
   children,
 }) => {
