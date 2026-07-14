@@ -89,42 +89,24 @@ export const utilityFunctions = (
     const fbp = getCookie("_fbp");
     const fbc = getCookie("_fbc");
 
-    let expires: string | null = null;
+    let fbp_expires: string | null = null;
+    let fbc_expires: string | null = null;
 
     if (typeof window !== "undefined") {
-      // 1. Try Cookie Store API (modern browsers like Chrome/Edge/Opera)
+      // Try Cookie Store API (modern browsers like Chrome/Edge/Opera)
       if ((window as any).cookieStore) {
         try {
           const cookieFbp = await (window as any).cookieStore.get("_fbp");
           if (cookieFbp && typeof cookieFbp.expires === "number") {
-            expires = new Date(cookieFbp.expires).toISOString();
-          } else {
-            const cookieFbc = await (window as any).cookieStore.get("_fbc");
-            if (cookieFbc && typeof cookieFbc.expires === "number") {
-              expires = new Date(cookieFbc.expires).toISOString();
-            }
+            fbp_expires = new Date(cookieFbp.expires).toISOString();
+          }
+          const cookieFbc = await (window as any).cookieStore.get("_fbc");
+          if (cookieFbc && typeof cookieFbc.expires === "number") {
+            fbc_expires = new Date(cookieFbc.expires).toISOString();
           }
         } catch (e) {
           console.warn("Error reading from cookieStore:", e);
         }
-      }
-
-      // 2. Fallback: Parse creation timestamp from fbp/fbc value if cookieStore didn't provide it
-      if (!expires) {
-        const parseFallbackExpires = (val: string | null): string | null => {
-          if (!val) return null;
-          const parts = val.split(".");
-          if (parts.length >= 3) {
-            const creationTimeSec = parseInt(parts[2], 10);
-            if (!isNaN(creationTimeSec)) {
-              // Add 90 days (7776000 seconds) standard lifetime
-              const expiresMs = (creationTimeSec + 90 * 24 * 60 * 60) * 1000;
-              return new Date(expiresMs).toISOString();
-            }
-          }
-          return null;
-        };
-        expires = parseFallbackExpires(fbp) || parseFallbackExpires(fbc);
       }
     }
 
@@ -132,7 +114,8 @@ export const utilityFunctions = (
     const data = {
       fbp: fbp || "",
       fbc: fbc || "",
-      expires: expires || null,
+      fbp_expires: fbp_expires || null,
+      fbc_expires: fbc_expires || null,
     };
 
     try {
