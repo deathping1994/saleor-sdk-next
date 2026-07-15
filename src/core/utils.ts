@@ -89,8 +89,7 @@ export const utilityFunctions = (
     const fbp = getCookie("_fbp");
     const fbc = getCookie("_fbc");
 
-    let fbp_expires: string | null = null;
-    let fbc_expires: string | null = null;
+    let expires: string | null = null;
 
     if (typeof window !== "undefined") {
       // Try Cookie Store API (modern browsers like Chrome/Edge/Opera)
@@ -98,11 +97,12 @@ export const utilityFunctions = (
         try {
           const cookieFbp = await (window as any).cookieStore.get("_fbp");
           if (cookieFbp && typeof cookieFbp.expires === "number") {
-            fbp_expires = new Date(cookieFbp.expires).toISOString();
-          }
-          const cookieFbc = await (window as any).cookieStore.get("_fbc");
-          if (cookieFbc && typeof cookieFbc.expires === "number") {
-            fbc_expires = new Date(cookieFbc.expires).toISOString();
+            expires = new Date(cookieFbp.expires).toISOString();
+          } else {
+            const cookieFbc = await (window as any).cookieStore.get("_fbc");
+            if (cookieFbc && typeof cookieFbc.expires === "number") {
+              expires = new Date(cookieFbc.expires).toISOString();
+            }
           }
         } catch (e) {
           console.warn("Error reading from cookieStore:", e);
@@ -114,8 +114,7 @@ export const utilityFunctions = (
     const data = {
       fbp: fbp || "",
       fbc: fbc || "",
-      fbp_expires: fbp_expires || null,
-      fbc_expires: fbc_expires || null,
+      expires: expires || null,
     };
 
     try {
