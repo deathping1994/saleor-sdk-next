@@ -91,6 +91,7 @@ export const utilityFunctions = (
 
     let fbp_expire: string | null = null;
     let fbc_expire: string | null = null;
+    let checkoutId: string | null = null;
 
     if (typeof window !== "undefined") {
       // Try Cookie Store API (modern browsers like Chrome/Edge/Opera)
@@ -108,6 +109,16 @@ export const utilityFunctions = (
           console.warn("Error reading from cookieStore:", e);
         }
       }
+
+      try {
+        const checkoutData = localStorage.getItem("data_checkout");
+        if (checkoutData) {
+          const parsed = typeof checkoutData === "string" ? JSON.parse(checkoutData) : checkoutData;
+          checkoutId = parsed?.token || parsed?.id || null;
+        }
+      } catch (e) {
+        console.warn("Error reading checkout token from localStorage:", e);
+      }
     }
 
     const fullUrl = `${restApiUrl}${REST_API_ENDPOINTS.META_SYNC}`;
@@ -116,6 +127,7 @@ export const utilityFunctions = (
       fbc: fbc || "",
       fbp_expire: fbp_expire || null,
       fbc_expire: fbc_expire || null,
+      checkoutId: checkoutId || null,
     };
 
     try {
