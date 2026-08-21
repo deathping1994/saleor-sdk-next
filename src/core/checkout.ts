@@ -328,6 +328,8 @@ export const checkout = ({
           postalCode: shippingAddress.postalCode,
           streetAddress1: shippingAddress.streetAddress1,
           streetAddress2: shippingAddress.streetAddress2,
+          latitude: (shippingAddress as any).latitude,
+          longitude: (shippingAddress as any).longitude,
         },
       };
 
@@ -649,6 +651,8 @@ export const checkout = ({
           postalCode: shippingAddress.postalCode,
           streetAddress1: shippingAddress.streetAddress1,
           streetAddress2: shippingAddress.streetAddress2,
+          latitude: (shippingAddress as any).latitude,
+         longitude: (shippingAddress as any).longitude,
         },
         billingAddress: {
           city: shippingAddress.city,
@@ -661,6 +665,8 @@ export const checkout = ({
           postalCode: shippingAddress.postalCode,
           streetAddress1: shippingAddress.streetAddress1,
           streetAddress2: shippingAddress.streetAddress2,
+          latitude: (shippingAddress as any).latitude,
+         longitude: (shippingAddress as any).longitude,
         },
       };
 

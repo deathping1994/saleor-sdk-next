@@ -5,6 +5,8 @@ export interface IAddress {
     companyName?: string;
     streetAddress1?: string;
     streetAddress2?: string;
+    latitude?: any;
+    longitude?: any;
     city?: string;
     postalCode?: string;
     countryArea?: string;
