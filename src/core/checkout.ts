@@ -390,6 +390,8 @@ export const checkout = ({
           postalCode: shippingAddress.postalCode,
           streetAddress1: shippingAddress.streetAddress1,
           streetAddress2: shippingAddress.streetAddress2,
+          latitude: shippingAddress.latitude,
+          longitude: shippingAddress.longitude,
         },
       };
 
@@ -405,7 +407,7 @@ export const checkout = ({
       })
       .then((res) => res.json())
       .then(async (data) => {
-        
+
         const updatedCheckout = {
           ...dummyCheckoutFields,
           ...data
@@ -478,6 +480,8 @@ export const checkout = ({
           postalCode: billingAddress.postalCode,
           streetAddress1: billingAddress.streetAddress1,
           streetAddress2: billingAddress.streetAddress2,
+          latitude: billingAddress.latitude,
+          longitude: billingAddress.longitude,
         },
       };
       const res = await client.mutate<
@@ -533,6 +537,8 @@ export const checkout = ({
           postalCode: billingAddress.postalCode,
           streetAddress1: billingAddress.streetAddress1,
           streetAddress2: billingAddress.streetAddress2,
+          latitude: billingAddress.latitude,
+          longitude: billingAddress.longitude,
         },
       };
 
