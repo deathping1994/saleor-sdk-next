@@ -394,9 +394,9 @@ export const checkout = ({
           longitude: shippingAddress.longitude,
         },
       };
-
+      
       const token = storage.getAccessToken();
-
+      console.log("variablesSDK1", variables)
       await fetch(`${restApiUrl}/rest/address_update/`,{
         method: "POST",
           headers: {
@@ -543,7 +543,7 @@ export const checkout = ({
       };
 
       const token = storage.getAccessToken();
-
+console.log("variablesSDK2", variables)
       await fetch(`${restApiUrl}/rest/address_update/`,{
         method: "POST",
           headers: {
@@ -658,7 +658,7 @@ export const checkout = ({
           streetAddress1: shippingAddress.streetAddress1,
           streetAddress2: shippingAddress.streetAddress2,
           latitude: (shippingAddress as any).latitude,
-         longitude: (shippingAddress as any).longitude,
+          longitude: (shippingAddress as any).longitude,
         },
         billingAddress: {
           city: shippingAddress.city,
@@ -677,7 +677,7 @@ export const checkout = ({
       };
 
       const token = storage.getAccessToken();
-
+console.log("variablesSDK3", variables)
       const response = await fetch(`${restApiUrl}/rest/address_update/`,{
         method: "POST",
           headers: {
