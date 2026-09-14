@@ -88,7 +88,8 @@ export interface CartSDK {
 
 export const cart = ({
   apolloClient: client,
-  restApiUrl
+  restApiUrl,
+  clientId,
 }: SaleorClientMethodsProps): CartSDK => {
   let items = cartItemsVar();
 
@@ -179,7 +180,8 @@ export const cart = ({
     if (checkout && checkout?.token) {
       const token = storage.getAccessToken();
       let header:any = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "x-client-id": clientId || ""
       };
       if(token){
         header={
