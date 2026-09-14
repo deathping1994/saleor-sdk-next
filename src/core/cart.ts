@@ -181,7 +181,7 @@ export const cart = ({
       const token = storage.getAccessToken();
       let header:any = {
         "Content-Type": "application/json",
-        "x-client-id": clientId || ""
+        "x-client-uuid": clientId || ""
       };
       if(token){
         header={
