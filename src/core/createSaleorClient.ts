@@ -16,6 +16,7 @@ export const createSaleorClient = ({
   channel,
   opts = {},
   restApiUrl,
+  clientId,
 }: SaleorClientOpts): SaleorClient => {
   let _channel = channel;
   const { autologin = true, fetchOpts } = opts;
@@ -27,7 +28,7 @@ export const createSaleorClient = ({
 
   createStorage(autologin);
   const apolloClient = createApolloClient(apiUrl, autologin, fetchOpts);
-  const coreInternals = { apolloClient, channel: _channel,restApiUrl };
+  const coreInternals = { apolloClient, channel: _channel, restApiUrl, clientId };
   const authSDK = auth(coreInternals);
   const userSDK = user(coreInternals);
   const cartSDK = cart(coreInternals);

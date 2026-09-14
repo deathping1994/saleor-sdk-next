@@ -178,7 +178,8 @@ export interface CheckoutSDK {
 
 export const checkout = ({
   apolloClient: client,
-  restApiUrl
+  restApiUrl,
+  clientId,
 }: SaleorClientMethodsProps): CheckoutSDK => {
   const createCheckoutRest: CheckoutSDK["createCheckoutRest"] = async (checkoutInput) => {
     try {
@@ -198,6 +199,7 @@ export const checkout = ({
         const token = storage.getAccessToken();
         let header:any = {
           "Content-Type": "application/json",
+          "x-client-id": clientId || "",
         };
         if(token) header={
           ...header,

@@ -87,6 +87,7 @@ import { RestApiFunctionSDK } from "./utils";
 export interface SaleorClientInternals {
   apolloClient: ApolloClient<NormalizedCacheObject>;
   restApiUrl?: any;
+  clientId?: string;
 }
 export interface SaleorClientConfig {
   channel: string;
@@ -118,6 +119,7 @@ export interface SaleorClientOpts {
   channel: string;
   opts?: SaleorClientFetchOpts;
   restApiUrl?: any;
+  clientId?: string;
 }
 
 export interface ShippingAndBilling {
