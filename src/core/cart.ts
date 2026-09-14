@@ -86,6 +86,18 @@ export interface CartSDK {
   updateCartAccordingLocation: (warehouseId: string) => any;
 }
 
+// The REST add_to_cart endpoint expects the raw DB variant id (it does int(id)).
+// Convert a base64 GraphQL global id ("ProductVariant:123") to "123"; leave
+// already-raw ids untouched.
+const toVariantDbId = (id: any): any => {
+  if (typeof id !== "string" || typeof atob === "undefined") return id;
+  try {
+    const match = atob(id).match(/^ProductVariant:(.+)$/);
+    if (match) return match[1];
+  } catch (e) {}
+  return id;
+};
+
 export const cart = ({
   apolloClient: client,
   restApiUrl,
@@ -178,6 +190,15 @@ export const cart = ({
     }
 
     if (checkout && checkout?.token) {
+      // API expects the checkout token as checkoutId and raw DB variant ids.
+      atcPayload = {
+        ...atcPayload,
+        checkoutId: checkout.token,
+        lines: (atcPayload?.lines || []).map((line: any) => ({
+          ...line,
+          variantId: toVariantDbId(line?.variantId),
+        })),
+      };
       const token = storage.getAccessToken();
       let header:any = {
         "Content-Type": "application/json",
