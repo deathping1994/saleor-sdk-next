@@ -409,7 +409,8 @@ export const cart = ({
       // });
       const token = storage.getAccessToken();
       let header:any = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "x-client-uuid": clientId || ""
       };
       if(token){
         header={
@@ -418,16 +419,16 @@ export const cart = ({
         }
       }
       const obj = {
-        checkoutId: checkout?.id,
+        checkoutId: checkout?.token,
         lines: [
           {
             quantity: 0,
-            variantId: variantId
+            variantId: toVariantDbId(variantId)
           },
         ],
         checkoutMetadataInput,
         isRecalculate: true,
-      }  
+      }
       const resJson = await fetch(`${restApiUrl}/rest/update_cart/`,{
         method: "POST",
         headers: header,
@@ -569,8 +570,11 @@ export const cart = ({
         const localWarehouse = checkout?.metadata?.find((item: any) => item?.key === 'warehouse_id')?.value;
         const currentWarehouse = updatePayload?.checkoutMetadataInput?.find(item => item?.key === 'warehouse_id')?.value;
         const payload:AtcPayload = {
-          checkoutId: checkout?.id,
-          lines: updatePayload?.lines,
+          checkoutId: checkout?.token,
+          lines: (updatePayload?.lines || []).map((line: any) => ({
+            ...line,
+            variantId: toVariantDbId(line?.variantId),
+          })),
           isRecalculate: updatePayload?.isRecalculate
         };
         if (localWarehouse !== currentWarehouse) {
@@ -582,7 +586,8 @@ export const cart = ({
       if (checkout && checkout?.token) {
         const token = storage.getAccessToken();
         let header:any = {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-client-uuid": clientId || ""
         };
         if(token){
           header={
