@@ -361,7 +361,8 @@ const getTypePolicies = (autologin: boolean): TypedTypePolicies => ({
 export const createApolloClient = (
   apiUrl: string,
   autologin: boolean,
-  fetchOptions?: FetchConfig
+  fetchOptions?: FetchConfig,
+  clientId?: string
 ): ApolloClient<NormalizedCacheObject> => {
   const httpLink = createHttpLink({
     fetch: createFetch(fetchOptions),
@@ -403,6 +404,7 @@ export const createApolloClient = (
     return {
       headers: {
         ...headers,
+        "x-client-uuid": clientId || "",
         event_source_url:
           typeof window !== "undefined" ? window.location.href : "",
         "x-client-ip-address": ip || "",

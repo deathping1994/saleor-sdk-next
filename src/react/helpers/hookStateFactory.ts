@@ -16,6 +16,11 @@ const CreateSaleorStateHook = <TData, TVariables>(
   return useQuery<TData, TVariables>(query, {
     client: saleorClient._internal.apolloClient,
     fetchPolicy: "cache-only",
+    // REST-persisted checkout lines omit optional fields (line.data,
+    // variant.quantityAvailable) that GET_LOCAL_CHECKOUT selects. Without this,
+    // a missing-field error makes the whole read return undefined and the cart
+    // renders empty. Partial data returns the lines we do have.
+    returnPartialData: true,
   });
 };
 

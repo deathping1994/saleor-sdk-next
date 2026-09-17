@@ -37,15 +37,9 @@ export const userFragment = gql`
     email
     firstName
     lastName
-    phone
     isStaff
     tags {
       name
-    }
-    extraData {
-      id
-      key
-      value
     }
     orders (first: 2) {
       edges {
@@ -68,14 +62,6 @@ export const userFragment = gql`
     }
     addresses {
       ...AddressFragment
-    }
-    membershipHistory {
-      id
-      membershipAmount
-      membershipPurchase
-      membershipCashbackDiscount
-      membershipFreeShipping
-      membershipExpiry
     }
   }
 `;
@@ -203,7 +189,6 @@ export const checkoutLineFragment = gql`
   fragment CheckoutLine on CheckoutLine {
     id
     quantity
-    data
     totalPrice {
       ...Price
     }
@@ -359,7 +344,6 @@ export const orderDetailFragment = gql`
       id
       productName
       quantity
-      data
       variant {
         ...ProductVariant
       }
