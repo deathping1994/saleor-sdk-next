@@ -12275,6 +12275,7 @@ export type Order = Node & ObjectWithMetadata & {
   /** List of user gift cards. */
   giftCards: Maybe<Array<Maybe<GiftCard>>>;
   discount: Maybe<Money>;
+  bundleDiscount: Maybe<Money>;
   discountName: Maybe<Scalars['String']>;
   translatedDiscountName: Maybe<Scalars['String']>;
   displayGrossPrices: Scalars['Boolean'];
@@ -22421,7 +22422,7 @@ export type CheckoutPaymentsNextQueryVariables = Exact<{
 
 export type CheckoutPaymentsNextQuery = { checkout: Maybe<(
     Pick<Checkout, 'id' | 'token' | 'voucherCode'>
-    & { totalPrice: Maybe<PriceFragment>, cashback: Maybe<Pick<CashbackType, 'amount' | 'willAddOn'>>, discount: Maybe<Pick<Money, 'amount' | 'currency'>>, paymentMethod: Maybe<Pick<PaymentMethodType, 'cashbackDiscountAmount' | 'couponDiscount' | 'prepaidDiscountAmount'|'platformChargeAmount'>>, subtotalPrice: Maybe<PriceFragment> }
+    & { totalPrice: Maybe<PriceFragment>, cashback: Maybe<Pick<CashbackType, 'amount' | 'willAddOn'>>, discount: Maybe<Pick<Money, 'amount' | 'currency'>>, bundleDiscount: Maybe<Pick<Money, 'amount' | 'currency'>>, paymentMethod: Maybe<Pick<PaymentMethodType, 'cashbackDiscountAmount' | 'couponDiscount' | 'prepaidDiscountAmount'|'platformChargeAmount'>>, subtotalPrice: Maybe<PriceFragment> }
   )> };
 
 export type GetCartItemsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -25117,6 +25118,10 @@ export const CheckoutPaymentsNextDocument = gql`
     }
     voucherCode
     discount {
+      amount
+      currency
+    }
+    bundleDiscount {
       amount
       currency
     }
