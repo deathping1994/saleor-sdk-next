@@ -21754,7 +21754,7 @@ export type PaymentGatewayFragment = (
 
 export type CheckoutFragment = (
   Pick<Checkout, 'token' | 'id' | 'email' | 'isShippingRequired' | 'discountName' | 'translatedDiscountName' | 'voucherCode'>
-  & { metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, tags: Maybe<Array<Maybe<Pick<TagType, 'name'>>>>, totalPrice: Maybe<PriceFragment>, subtotalPrice: Maybe<PriceFragment>, billingAddress: Maybe<AddressFragment>, shippingAddress: Maybe<AddressFragment>, availableShippingMethods: Array<Maybe<ShippingMethodFragment>>, shippingMethod: Maybe<ShippingMethodFragment>, shippingPrice: Maybe<PriceFragment>, lines: Maybe<Array<Maybe<CheckoutLineFragment>>>, discount: Maybe<Pick<Money, 'currency' | 'amount'>>, availablePaymentGateways: Array<PaymentGatewayFragment> }
+  & { bundleDiscount: Maybe<Pick<Money, 'currency' | 'amount'>>, metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, tags: Maybe<Array<Maybe<Pick<TagType, 'name'>>>>, totalPrice: Maybe<PriceFragment>, subtotalPrice: Maybe<PriceFragment>, billingAddress: Maybe<AddressFragment>, shippingAddress: Maybe<AddressFragment>, availableShippingMethods: Array<Maybe<ShippingMethodFragment>>, shippingMethod: Maybe<ShippingMethodFragment>, shippingPrice: Maybe<PriceFragment>, lines: Maybe<Array<Maybe<CheckoutLineFragment>>>, discount: Maybe<Pick<Money, 'currency' | 'amount'>>, availablePaymentGateways: Array<PaymentGatewayFragment> }
 );
 
 export type CheckoutErrorFragment = Pick<CheckoutError, 'code' | 'field' | 'message'>;
@@ -21772,7 +21772,7 @@ export type OrderDetailFragment = (
       Pick<TaxedMoney, 'currency'>
       & OrderPriceFragment
     )> }
-  )>>, subtotal: Maybe<OrderPriceFragment>, total: Maybe<OrderPriceFragment>, shippingPrice: Maybe<OrderPriceFragment> }
+  )>>, subtotal: Maybe<OrderPriceFragment>, total: Maybe<OrderPriceFragment>, shippingPrice: Maybe<OrderPriceFragment>, bundleDiscount: Maybe<Pick<Money, 'currency' | 'amount'>> }
 );
 
 export type PaymentFragment = (
