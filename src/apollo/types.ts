@@ -2338,6 +2338,7 @@ export type Checkout = Node & ObjectWithMetadata & {
   shippingMethod: Maybe<ShippingMethod>;
   note: Scalars['String'];
   discount: Maybe<Money>;
+  bundleDiscount: Maybe<Money>;
   discountName: Maybe<Scalars['String']>;
   translatedDiscountName: Maybe<Scalars['String']>;
   voucherCode: Maybe<Scalars['String']>;
