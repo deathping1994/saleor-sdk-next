@@ -108,7 +108,7 @@ export const useCartState = () => {
       ) || defaultPrice,
     bundleDiscount: 
       createTaxedPriceFromAmount(
-        data?.localCheckout?.bundleDiscount?.amount
+        data?.localCheckout?.bundleDiscount?.amount || 0
       ) || defaultPrice,
     cashbackRecieve: data?.localCashback || { amount: 0, willAddOn: null },
   };
