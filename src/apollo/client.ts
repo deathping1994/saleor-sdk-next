@@ -1,6 +1,5 @@
 import {
   ApolloClient,
-  ApolloLink,
   createHttpLink,
   InMemoryCache,
   NormalizedCacheObject,
@@ -10,8 +9,6 @@ import {
 } from "@apollo/client";
 import fetch from "cross-fetch";
 import jwtDecode from "jwt-decode";
-import { print } from "graphql";
-import crypto from "crypto";
 
 import { TypedTypePolicies } from "./apollo-helpers";
 import { JWTToken } from "../core";
@@ -412,23 +409,6 @@ const getTypePolicies = (autologin: boolean): TypedTypePolicies => ({
   },
 });
 
-const persistedQueryLink = new ApolloLink((operation, forward) => {
-  const { operationName, query } = operation;
-  const queryString = print(query);
-  const hashInput = `${operationName || ""}:${queryString}`;
-  const hashId = crypto.createHash("sha256").update(hashInput).digest("hex");
-
-  operation.extensions = {
-    ...operation.extensions,
-    persistedQuery: {
-      version: 1,
-      hashId: hashId,
-    },
-  };
-
-  return forward(operation);
-});
-
 export const createApolloClient = (
   apiUrl: string,
   autologin: boolean,
@@ -487,7 +467,7 @@ export const createApolloClient = (
 
   client = new ApolloClient({
     cache,
-    link: ApolloLink.from([authLink, persistedQueryLink, httpLink]),
+    link: authLink.concat(httpLink),
   });
 
   /**
