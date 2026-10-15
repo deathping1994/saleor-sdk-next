@@ -216,6 +216,8 @@ export type AccountRegisterInputV2 = {
   firstName?: Maybe<Scalars['String']>;
   /** Last name of the user */
   lastName?: Maybe<Scalars['String']>;
+  /** Referral hash */
+  referHash?: Maybe<Scalars['String']>;
 };
 
 /** Register a new user with phone and email. */
@@ -231,6 +233,7 @@ export type AccountRegisterV2 = {
   isActiveUser: Maybe<Scalars['Boolean']>;
   accountErrors: Array<AccountError>;
   user: Maybe<User>;
+  message?: Maybe<Scalars['String']>;
 };
 
 /** Sends an email with the account removal link for the logged-in user. */
@@ -2338,6 +2341,7 @@ export type Checkout = Node & ObjectWithMetadata & {
   shippingMethod: Maybe<ShippingMethod>;
   note: Scalars['String'];
   discount: Maybe<Money>;
+  bundleDiscount: Maybe<Money>;
   discountName: Maybe<Scalars['String']>;
   translatedDiscountName: Maybe<Scalars['String']>;
   voucherCode: Maybe<Scalars['String']>;
@@ -12275,6 +12279,7 @@ export type Order = Node & ObjectWithMetadata & {
   /** List of user gift cards. */
   giftCards: Maybe<Array<Maybe<GiftCard>>>;
   discount: Maybe<Money>;
+  bundleDiscount: Maybe<Money>;
   discountName: Maybe<Scalars['String']>;
   translatedDiscountName: Maybe<Scalars['String']>;
   displayGrossPrices: Scalars['Boolean'];
@@ -21752,7 +21757,7 @@ export type PaymentGatewayFragment = (
 
 export type CheckoutFragment = (
   Pick<Checkout, 'token' | 'id' | 'email' | 'isShippingRequired' | 'discountName' | 'translatedDiscountName' | 'voucherCode'>
-  & { metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, tags: Maybe<Array<Maybe<Pick<TagType, 'name'>>>>, totalPrice: Maybe<PriceFragment>, subtotalPrice: Maybe<PriceFragment>, billingAddress: Maybe<AddressFragment>, shippingAddress: Maybe<AddressFragment>, availableShippingMethods: Array<Maybe<ShippingMethodFragment>>, shippingMethod: Maybe<ShippingMethodFragment>, shippingPrice: Maybe<PriceFragment>, lines: Maybe<Array<Maybe<CheckoutLineFragment>>>, discount: Maybe<Pick<Money, 'currency' | 'amount'>>, availablePaymentGateways: Array<PaymentGatewayFragment> }
+  & { bundleDiscount: Maybe<Pick<Money, 'currency' | 'amount'>>, metadata: Array<Maybe<Pick<MetadataItem, 'key' | 'value'>>>, tags: Maybe<Array<Maybe<Pick<TagType, 'name'>>>>, totalPrice: Maybe<PriceFragment>, subtotalPrice: Maybe<PriceFragment>, billingAddress: Maybe<AddressFragment>, shippingAddress: Maybe<AddressFragment>, availableShippingMethods: Array<Maybe<ShippingMethodFragment>>, shippingMethod: Maybe<ShippingMethodFragment>, shippingPrice: Maybe<PriceFragment>, lines: Maybe<Array<Maybe<CheckoutLineFragment>>>, discount: Maybe<Pick<Money, 'currency' | 'amount'>>, availablePaymentGateways: Array<PaymentGatewayFragment> }
 );
 
 export type CheckoutErrorFragment = Pick<CheckoutError, 'code' | 'field' | 'message'>;
@@ -21770,7 +21775,7 @@ export type OrderDetailFragment = (
       Pick<TaxedMoney, 'currency'>
       & OrderPriceFragment
     )> }
-  )>>, subtotal: Maybe<OrderPriceFragment>, total: Maybe<OrderPriceFragment>, shippingPrice: Maybe<OrderPriceFragment> }
+  )>>, subtotal: Maybe<OrderPriceFragment>, total: Maybe<OrderPriceFragment>, shippingPrice: Maybe<OrderPriceFragment>, bundleDiscount: Maybe<Pick<Money, 'currency' | 'amount'>> }
 );
 
 export type PaymentFragment = (
@@ -21902,8 +21907,8 @@ export type AccountRegisterV2MutationVariables = Exact<{
 
 
 export type AccountRegisterV2Mutation = { accountRegisterV2: Maybe<(
-    Pick<AccountRegisterV2, 'isNewUser' | 'isActiveUser'>
-    & { accountErrors: Array<Pick<AccountError, 'field' | 'message'>>, errors: Array<Pick<Error, 'field' | 'message'>> }
+    Pick<AccountRegisterV2, 'isNewUser' | 'isActiveUser' | 'message'>
+    & { accountErrors: Array<Pick<AccountError, 'field' | 'message' | 'code'>>, errors: Array<Pick<Error, 'field' | 'message'>> }
   )> };
 
 export type ConfirmAccountV2MutationVariables = Exact<{
@@ -22421,7 +22426,7 @@ export type CheckoutPaymentsNextQueryVariables = Exact<{
 
 export type CheckoutPaymentsNextQuery = { checkout: Maybe<(
     Pick<Checkout, 'id' | 'token' | 'voucherCode'>
-    & { totalPrice: Maybe<PriceFragment>, cashback: Maybe<Pick<CashbackType, 'amount' | 'willAddOn'>>, discount: Maybe<Pick<Money, 'amount' | 'currency'>>, paymentMethod: Maybe<Pick<PaymentMethodType, 'cashbackDiscountAmount' | 'couponDiscount' | 'prepaidDiscountAmount'|'platformChargeAmount'>>, subtotalPrice: Maybe<PriceFragment> }
+    & { totalPrice: Maybe<PriceFragment>, cashback: Maybe<Pick<CashbackType, 'amount' | 'willAddOn'>>, discount: Maybe<Pick<Money, 'amount' | 'currency'>>, bundleDiscount: Maybe<Pick<Money, 'amount' | 'currency'>>, paymentMethod: Maybe<Pick<PaymentMethodType, 'cashbackDiscountAmount' | 'couponDiscount' | 'prepaidDiscountAmount'|'platformChargeAmount'>>, subtotalPrice: Maybe<PriceFragment> }
   )> };
 
 export type GetCartItemsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -25117,6 +25122,10 @@ export const CheckoutPaymentsNextDocument = gql`
     }
     voucherCode
     discount {
+      amount
+      currency
+    }
+    bundleDiscount {
       amount
       currency
     }
