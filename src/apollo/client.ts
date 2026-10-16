@@ -438,6 +438,7 @@ export const createApolloClient = (
     fetch: createFetch(fetchOptions),
     uri: apiUrl,
     credentials: "include",
+    includeExtensions: true,
   });
 
   const cache = new InMemoryCache({
