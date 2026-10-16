@@ -259,6 +259,10 @@ export const checkoutFragment = gql`
       currency
       amount
     }
+    bundleDiscount {
+      currency
+      amount
+    }
     discountName
     translatedDiscountName
     voucherCode

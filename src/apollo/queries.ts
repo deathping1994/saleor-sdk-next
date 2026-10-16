@@ -69,6 +69,10 @@ export const CHECKOUT_PAYMENTS_NEXT = gql`
         amount
         currency
       }
+      bundleDiscount {
+        amount
+        currency
+      }
       paymentMethod {
         cashbackDiscountAmount
         couponDiscount

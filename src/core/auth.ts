@@ -257,7 +257,8 @@ export interface AuthSDK {
     phone: string,
     firstName?: string,
     lastName?: string,
-    sendWigzoInHeader?: boolean
+    sendWigzoInHeader?: boolean,
+    referHash?: string
   ) => RegisterAccountV2Result;
 
   confirmAccountV2: (
@@ -561,7 +562,8 @@ export const auth = ({
     phone: string,
     firstName?: string,
     lastName?: string,
-    sendWigzoInHeader?: boolean
+    sendWigzoInHeader?: boolean,
+    referHash?: string
   ) => {
     let res;
     if (sendWigzoInHeader) {
@@ -599,6 +601,7 @@ export const auth = ({
             phone,
             firstName,
             lastName,
+            referHash,
           },
         },
         context: {
@@ -619,6 +622,7 @@ export const auth = ({
             phone,
             firstName,
             lastName,
+            referHash,
           },
         },
       });
