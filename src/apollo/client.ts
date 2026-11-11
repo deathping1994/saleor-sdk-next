@@ -287,12 +287,12 @@ const getTypePolicies = (autologin: boolean): TypedTypePolicies => ({
               discountsString && typeof discountsString === "string"
                 ? JSON.parse(discountsString)
                 : discountsString;
-              const checkoutDiscounts = {
+            const checkoutDiscounts = {
                 prepaidDiscount: discounts?.checkoutDiscounts?.prepaidDiscount ? discounts?.checkoutDiscounts?.prepaidDiscount: "0",
                 couponDiscount: discounts?.checkoutDiscounts?.couponDiscount ?discounts?.checkoutDiscounts?.couponDiscount : "0",
                 cashbackDiscount: discounts?.checkoutDiscounts?.cashbackDiscount ? discounts?.checkoutDiscounts?.cashbackDiscount : "0",
                 platformCharge: discounts?.checkoutDiscounts?.platformCharge ? discounts?.checkoutDiscounts?.platformCharge : "0",
-              };
+             };
 
             return (
               checkoutDiscounts || {
@@ -438,6 +438,7 @@ export const createApolloClient = (
     fetch: createFetch(fetchOptions),
     uri: apiUrl,
     credentials: "include",
+    includeExtensions: true,
   });
 
   const cache = new InMemoryCache({
