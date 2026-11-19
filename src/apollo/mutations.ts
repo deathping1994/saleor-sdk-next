@@ -509,9 +509,11 @@ export const REGISTER_ACCOUNT = gql`
     accountRegisterV2(input: $input) {
       isNewUser
       isActiveUser
+      message
       accountErrors {
         field
         message
+        code
       }
       errors {
         field

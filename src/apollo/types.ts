@@ -216,6 +216,8 @@ export type AccountRegisterInputV2 = {
   firstName?: Maybe<Scalars['String']>;
   /** Last name of the user */
   lastName?: Maybe<Scalars['String']>;
+  /** Referral hash */
+  referHash?: Maybe<Scalars['String']>;
 };
 
 /** Register a new user with phone and email. */
@@ -231,6 +233,7 @@ export type AccountRegisterV2 = {
   isActiveUser: Maybe<Scalars['Boolean']>;
   accountErrors: Array<AccountError>;
   user: Maybe<User>;
+  message?: Maybe<Scalars['String']>;
 };
 
 /** Sends an email with the account removal link for the logged-in user. */
@@ -21902,8 +21905,8 @@ export type AccountRegisterV2MutationVariables = Exact<{
 
 
 export type AccountRegisterV2Mutation = { accountRegisterV2: Maybe<(
-    Pick<AccountRegisterV2, 'isNewUser' | 'isActiveUser'>
-    & { accountErrors: Array<Pick<AccountError, 'field' | 'message'>>, errors: Array<Pick<Error, 'field' | 'message'>> }
+    Pick<AccountRegisterV2, 'isNewUser' | 'isActiveUser' | 'message'>
+    & { accountErrors: Array<Pick<AccountError, 'field' | 'message' | 'code'>>, errors: Array<Pick<Error, 'field' | 'message'>> }
   )> };
 
 export type ConfirmAccountV2MutationVariables = Exact<{
